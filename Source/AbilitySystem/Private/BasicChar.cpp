@@ -20,10 +20,9 @@ ABasicChar::ABasicChar()
 
 	AttributeAsset = CreateDefaultSubobject<UAttributeSetBase>(FName("Attribute Asset"));
 
-
-	
 	AbilitySystemComponent = CreateDefaultSubobject<UCharAbilitySystemComponent>(FName("CharacterAbilitySystemComponent"));
-	
+
+	AttributeAsset->OnHealthChange.AddDynamic(this, &ABasicChar::OnHealthChange);
 	
 }
 
@@ -34,9 +33,6 @@ void ABasicChar::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
-	
-
 }
 
 // Called every frame
@@ -86,6 +82,15 @@ bool ABasicChar::ActiveAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool
 	{
 		return AbilitySystemComponent->TryActivateAbilityByClass(Ability, RemoteActivation);
 	}
+
+	}
+
+void ABasicChar::OnHealthChange(float Health, float MaxHealth) 
+	{
+
+	BP_OnHealthChange(Health, MaxHealth);
+
+	UE_LOG(LogTemp,Warning,TEXT("%f"),Health);
 
 	}
 
