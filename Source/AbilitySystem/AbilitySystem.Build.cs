@@ -8,6 +8,17 @@ public class AbilitySystem : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "GameplayAbilities" });
+		PrivateDependencyModuleNames.AddRange(
+			new string[] {
+				"Slate",
+				"SlateCore",
+				"InputCore",
+				"MoviePlayer",
+				"GameplayAbilities",
+				"GameplayTags",
+				"GameplayTasks"
+			}
+		);
 	}
 }
