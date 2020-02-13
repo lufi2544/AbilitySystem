@@ -54,6 +54,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnHealthChange"))
 		void BP_OnHealthChange(float Health, float MaxHealth);
 
+	/*	Event called when the Character dies.*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnDeath"))
+		void BP_OnDeath();
+
+
 
 
 
@@ -64,7 +69,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/*Returns true if the Character is still Alive*/
+	bool IsAlive();
+
+	//Memeber variable to store if The character is alive
+	bool bIsCharacterAlive;
 	
+private:
+
 
 
 

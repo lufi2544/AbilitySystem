@@ -23,6 +23,8 @@ ABasicChar::ABasicChar()
 	AbilitySystemComponent = CreateDefaultSubobject<UCharAbilitySystemComponent>(FName("CharacterAbilitySystemComponent"));
 
 	AttributeAsset->OnHealthChange.AddDynamic(this, &ABasicChar::OnHealthChange);
+
+	bIsCharacterAlive = true;
 	
 }
 
@@ -49,6 +51,18 @@ void ABasicChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 
 }
+
+bool ABasicChar::IsAlive() 
+	{
+	if (AttributeAsset->GetHealth() <= 0) {
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+
+	}
 
 UAbilitySystemComponent* ABasicChar::GetAbilitySystemComponent() const
 {
@@ -88,10 +102,14 @@ bool ABasicChar::ActiveAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool
 void ABasicChar::OnHealthChange(float Health, float MaxHealth) 
 	{
 
+	if (!IsAlive() && bIsCharacterAlive)
+	{
+		BP_OnDeath();
+		bIsCharacterAlive = false;
+	}
+
 	BP_OnHealthChange(Health, MaxHealth);
-
-	UE_LOG(LogTemp,Warning,TEXT("%f"),Health);
-
+	UE_LOG(LogTemp, Error, TEXT("%f"), Health);
 	}
 
 

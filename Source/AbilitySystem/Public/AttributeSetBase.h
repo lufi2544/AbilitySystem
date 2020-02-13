@@ -4,7 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
+#include "AbilitySystemComponent.h"
 #include "AttributeSetBase.generated.h"
+
+// Uses macros from AttributeSet.h
+#define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 
 
@@ -25,10 +33,12 @@ public:
    /* Health Amount*/
     UPROPERTY(BlueprintReadWrite, Category = "AttibuteSetBase")
         FGameplayAttributeData Health;
+    ATTRIBUTE_ACCESSORS(UAttributeSetBase, Health)
 
    /* Max Character Health*/
 	UPROPERTY(BlueprintReadWrite, Category = "AttibuteSetBase")
 		FGameplayAttributeData MaxHealth;
+    ATTRIBUTE_ACCESSORS(UAttributeSetBase, MaxHealth)
 
     void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
