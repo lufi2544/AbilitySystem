@@ -14,6 +14,8 @@ UAttributeSetBase::UAttributeSetBase()
 void UAttributeSetBase::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) 
 	{
 
+
+	// If the property changed of any GE applied is Health Then...
 	if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<UProperty>(UAttributeSetBase::StaticClass(), GET_MEMBER_NAME_CHECKED(UAttributeSetBase,Health)))
 	{
 

@@ -19,8 +19,10 @@ ABasicChar::ABasicChar()
 	//AbilitySystemComponent = CreateDefaultSubobject<UCharAbilitySystemComponent>(TEXT("AbilitySystemComponenet"));
 
 	AttributeAsset = CreateDefaultSubobject<UAttributeSetBase>(FName("Attribute Asset"));
+
+
 	
-	
+	AbilitySystemComponent = CreateDefaultSubobject<UCharAbilitySystemComponent>(FName("CharacterAbilitySystemComponent"));
 	
 	
 }
@@ -32,7 +34,7 @@ void ABasicChar::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	AbilitySystemComponent= FindComponentByClass<UCharAbilitySystemComponent>();
+	
 	
 
 }
@@ -59,24 +61,33 @@ UAbilitySystemComponent* ABasicChar::GetAbilitySystemComponent() const
 
 }
 
-void ABasicChar::AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire,UCharAbilitySystemComponent* AbilitySystemComponentReference)
+void ABasicChar::AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire)
 {
-	if (AbilitySystemComponentReference)
+	if (AbilitySystemComponent)
 	{
 		if (HasAuthority() && AbilityToAquire)
 		{
 
-			AbilitySystemComponentReference->GiveAbility(FGameplayAbilitySpec(AbilityToAquire, 1, 0));
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AbilityToAquire, 1, 0));
 
 		}
-		AbilitySystemComponentReference->InitAbilityActorInfo(this, this);
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
 
 	}
-
-	
-
 }
+
+
+bool ABasicChar::ActiveAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation) 
+	{
+
+	if (!ensure(AbilitySystemComponent)) { return false; }
+	else
+	{
+		return AbilitySystemComponent->TryActivateAbilityByClass(Ability, RemoteActivation);
+	}
+
+	}
 
 
 

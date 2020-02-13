@@ -28,14 +28,19 @@ public:
 	// Sets default values for this character's properties
 	ABasicChar();
 
-	
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UPROPERTY()
 	UCharAbilitySystemComponent* AbilitySystemComponent;
 
 	/*Function that Sets the Ability on the Character*/
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
-	virtual void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire, UCharAbilitySystemComponent* AbilitySystemComponentReference);
+	virtual void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
 
-	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+		bool ActiveAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
+
+
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="State")
 	UAttributeSetBase* AttributeAsset;
