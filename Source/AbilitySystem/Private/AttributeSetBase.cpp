@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+#include "AttributeSetBase.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
-#include "AttributeSetBase.h"
+
 
 UAttributeSetBase::UAttributeSetBase()
 

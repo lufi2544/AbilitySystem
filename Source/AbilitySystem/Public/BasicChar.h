@@ -44,6 +44,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 		bool ActiveAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
+
+
+	/*Returns true if the Character is still Alive*/
+	UFUNCTION(BlueprintPure, Category = "State")
+	bool IsAlive();
+
+	UFUNCTION(BlueprintPure, Category = "CharacterBase")
+		uint8 GetTeamID() const;
 	
 		
 
@@ -58,9 +66,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnDeath"))
 		void BP_OnDeath();
 
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+		bool IsOtherHostile( ABasicChar* Other);
 
+	void AutoDeterminTeamIDbyControllerType();
 
+	
 
+	void DisableController();
 
 
 	
@@ -69,11 +82,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	/*Returns true if the Character is still Alive*/
-	bool IsAlive();
-
 	//Memeber variable to store if The character is alive
 	bool bIsCharacterAlive;
+
+
+
+	uint8 TeamID;
 	
 private:
 

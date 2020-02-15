@@ -5,6 +5,10 @@
 #include "AbilitySystemComponent.h"
 #include "CharAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
+#include "PlayerControllerBase.h"
+#include "AIController.h"
+#include "BrainComponent.h"
+
 
 #include "AttributeSetBase.h"
 
@@ -25,6 +29,8 @@ ABasicChar::ABasicChar()
 	AttributeAsset->OnHealthChange.AddDynamic(this, &ABasicChar::OnHealthChange);
 
 	bIsCharacterAlive = true;
+
+	TeamID = 255;
 	
 }
 
@@ -34,6 +40,8 @@ ABasicChar::ABasicChar()
 void ABasicChar::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AutoDeterminTeamIDbyControllerType();
 	
 }
 
@@ -104,8 +112,12 @@ void ABasicChar::OnHealthChange(float Health, float MaxHealth)
 
 	if (!IsAlive() && bIsCharacterAlive)
 	{
+		DisableController();
+		BP_OnHealthChange(Health, MaxHealth);
 		BP_OnDeath();
 		bIsCharacterAlive = false;
+		
+		return;
 	}
 
 	BP_OnHealthChange(Health, MaxHealth);
@@ -113,6 +125,52 @@ void ABasicChar::OnHealthChange(float Health, float MaxHealth)
 	}
 
 
+bool ABasicChar::IsOtherHostile(ABasicChar* Other)
+{
+
+	return TeamID != Other->GetTeamID();
+
+}
+
+void ABasicChar::AutoDeterminTeamIDbyControllerType() 
+	{
+	if (GetController() && GetController()->IsPlayerController())
+	{
+
+		TeamID = 0;
+
+	}
 
 
+	}
+
+uint8 ABasicChar::GetTeamID() const
+{
+
+	return TeamID;
+
+}
+
+void ABasicChar::DisableController() 
+	{
+	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(GetController());
+
+	if (PlayerController)
+	{
+
+		PlayerController->DisableInput(PlayerController);
+
+	}
+
+	AAIController* AIController = Cast<AAIController>(GetController());
+
+	if (AIController)
+	{
+
+		AIController->GetBrainComponent()->StopLogic("Dead");
+
+	}
+
+
+	}
 
