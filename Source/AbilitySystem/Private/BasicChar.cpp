@@ -28,6 +28,12 @@ ABasicChar::ABasicChar()
 
 	AttributeAsset->OnHealthChange.AddDynamic(this, &ABasicChar::OnHealthChange);
 
+	AttributeAsset->OnManaChange.AddDynamic(this, &ABasicChar::OnManaChange);
+
+	AttributeAsset->OnStrenghtChange.AddDynamic(this, &ABasicChar::OnStrenghtChange);
+
+	AttributeAsset->OnLevelUp.AddDynamic(this, &ABasicChar::OnLevelUp);
+
 	bIsCharacterAlive = true;
 
 	TeamID = 255;
@@ -174,3 +180,24 @@ void ABasicChar::DisableController()
 
 	}
 
+void ABasicChar::OnManaChange(float Mana, float MaxMana) 
+	{
+
+	BP_OnManaChange(Mana, MaxMana);
+
+
+	}
+
+void ABasicChar::OnStrenghtChange(float Strenght, float MaxStrenght) 
+	{
+
+	BP_OnStrenghtChange(Strenght, MaxStrenght);
+
+	}
+
+void ABasicChar::OnLevelUp(float Level) 
+	{
+
+	BP_OnLevelUp(Level);
+
+	}

@@ -56,7 +56,16 @@ public:
 		
 
 	UFUNCTION()
-	void OnHealthChange(float Health, float MaxHealth);
+		void OnHealthChange(float Health, float MaxHealth);
+
+	UFUNCTION()
+		void OnManaChange(float Mana, float MaxMana);
+
+	UFUNCTION()
+		void OnStrenghtChange(float Strengh, float MaxStrenght);
+
+	UFUNCTION()
+		void OnLevelUp(float Level);
 
 	/*	Event called when the health has changed and it shows the Max Health too.*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnHealthChange"))
@@ -66,6 +75,21 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnDeath"))
 		void BP_OnDeath();
 
+	/*	Event called when the Mana changes.*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnManaChange"))
+		void BP_OnManaChange(float Mana, float MaxMana);
+
+	/*	Event called when the Mana changes.*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnStrenghtChange"))
+		void BP_OnStrenghtChange(float Strenght, float MaxStrenght);
+
+	/*	Event called when the Character levels up.*/
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnLevelUp"))
+		void BP_OnLevelUp(float Level);
+
+	/*Checks if other Character is an enemy.
+		@param ABasicChar Other Character.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
 		bool IsOtherHostile( ABasicChar* Other);
 
