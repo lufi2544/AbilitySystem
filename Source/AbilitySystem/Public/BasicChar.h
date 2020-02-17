@@ -43,7 +43,7 @@ public:
 	virtual void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
 
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-		bool ActiveAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
+		bool PlayerActivateAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
 
 
 	/*Returns true if the Character is still Alive*/

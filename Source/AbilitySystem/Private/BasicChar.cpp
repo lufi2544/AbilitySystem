@@ -102,7 +102,7 @@ void ABasicChar::AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire)
 }
 
 
-bool ABasicChar::ActiveAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation) 
+bool ABasicChar::PlayerActivateAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation)
 	{
 
 	if (!ensure(AbilitySystemComponent)) { return false; }
