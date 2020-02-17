@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "BasicChar.generated.h"
 
 
@@ -20,40 +21,16 @@ class USpringArmComponent;
 
 
 
+
 UCLASS()
 class ABILITYSYSTEM_API ABasicChar : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	ABasicChar();
-
-	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	UPROPERTY()
-	UCharAbilitySystemComponent* AbilitySystemComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "State")
-		UAttributeSetBase* AttributeAsset;
 
 
-	/*Function that Sets the Ability on the Character*/
-	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
-	virtual void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
-
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-		bool PlayerActivateAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
-
-
-	/*Returns true if the Character is still Alive*/
-	UFUNCTION(BlueprintPure, Category = "State")
-	bool IsAlive();
-
-	UFUNCTION(BlueprintPure, Category = "CharacterBase")
-		uint8 GetTeamID() const;
-	
-		
+	/*	Multicast Delegate Functions	*/
 
 	UFUNCTION()
 		void OnHealthChange(float Health, float MaxHealth);
@@ -66,6 +43,45 @@ public:
 
 	UFUNCTION()
 		void OnLevelUp(float Level);
+
+
+
+
+
+	// Sets default values for this character's properties
+	ABasicChar();
+
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UPROPERTY()
+		UCharAbilitySystemComponent* AbilitySystemComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "State")
+		UAttributeSetBase* AttributeAsset;
+
+
+
+
+
+	/*Function that Sets the Ability on the Character*/
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	virtual void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
+
+	/*Activate the current ability*/
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+		bool PlayerActivateAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
+
+
+	/*Returns true if the Character is still Alive*/
+	UFUNCTION(BlueprintPure, Category = "State")
+		bool IsAlive();
+
+	UFUNCTION(BlueprintPure, Category = "CharacterBase")
+		uint8 GetTeamID() const;
+	
+
+
+
 
 	/*	Event called when the health has changed and it shows the Max Health too.*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnHealthChange"))
@@ -93,11 +109,26 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
 		bool IsOtherHostile( ABasicChar* Other);
 
-	void AutoDeterminTeamIDbyControllerType();
+	//Add a certain Tag to the Character
+	UFUNCTION(BlueprintCallable, Category = "AbilityTags")
+		void AddTag(FGameplayTag& GivenTag);
+
+	//Remove a certain Tag from the character
+	UFUNCTION(BlueprintCallable, Category = "AbilitiesTags")
+		void RemoveTag(FGameplayTag& TagToRemove);
 
 	
+	/*Determine the team Id for the character*/
+	void AutoDeterminTeamIDbyControllerType();
 
+	/*Unposses the controller from the character*/
 	void DisableController();
+
+
+
+	//Tag that determines if the player is full health
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "AbilityTags")
+	FGameplayTag FullHealthTag;
 
 
 	
@@ -106,11 +137,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//Memeber variable to store if The character is alive
+	//Member variable to store if The character is alive
 	bool bIsCharacterAlive;
 
 
 
+	//The integer that determines the character team
 	uint8 TeamID;
 	
 private:

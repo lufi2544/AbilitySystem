@@ -2,14 +2,14 @@
 
 
 #include "BasicChar.h"
+
+
 #include "AbilitySystemComponent.h"
 #include "CharAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "PlayerControllerBase.h"
 #include "AIController.h"
 #include "BrainComponent.h"
-
-
 #include "AttributeSetBase.h"
 
 #include "GameFramework/SpringArmComponent.h"
@@ -33,6 +33,8 @@ ABasicChar::ABasicChar()
 	AttributeAsset->OnStrenghtChange.AddDynamic(this, &ABasicChar::OnStrenghtChange);
 
 	AttributeAsset->OnLevelUp.AddDynamic(this, &ABasicChar::OnLevelUp);
+
+	AddTag(FullHealthTag);
 
 	bIsCharacterAlive = true;
 
@@ -66,6 +68,17 @@ void ABasicChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 }
 
+UAbilitySystemComponent* ABasicChar::GetAbilitySystemComponent() const
+{
+
+	return AbilitySystemComponent;
+
+}
+
+
+
+///// GETTERS AND STATE FUNCTIONS ////
+
 bool ABasicChar::IsAlive() 
 	{
 	if (AttributeAsset->GetHealth() <= 0) {
@@ -78,12 +91,34 @@ bool ABasicChar::IsAlive()
 
 	}
 
-UAbilitySystemComponent* ABasicChar::GetAbilitySystemComponent() const
+uint8 ABasicChar::GetTeamID() const
 {
 
-	return AbilitySystemComponent;
+	return TeamID;
 
 }
+
+bool ABasicChar::IsOtherHostile(ABasicChar* Other)
+{
+
+	return TeamID != Other->GetTeamID();
+
+}
+
+void ABasicChar::AutoDeterminTeamIDbyControllerType()
+{
+	if (GetController() && GetController()->IsPlayerController())
+	{
+
+		TeamID = 0;
+
+	}
+
+
+}
+
+
+//////// FUNCTIONS ////////
 
 void ABasicChar::AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire)
 {
@@ -131,31 +166,10 @@ void ABasicChar::OnHealthChange(float Health, float MaxHealth)
 	}
 
 
-bool ABasicChar::IsOtherHostile(ABasicChar* Other)
-{
-
-	return TeamID != Other->GetTeamID();
-
-}
-
-void ABasicChar::AutoDeterminTeamIDbyControllerType() 
-	{
-	if (GetController() && GetController()->IsPlayerController())
-	{
-
-		TeamID = 0;
-
-	}
 
 
-	}
 
-uint8 ABasicChar::GetTeamID() const
-{
 
-	return TeamID;
-
-}
 
 void ABasicChar::DisableController() 
 	{
@@ -170,15 +184,32 @@ void ABasicChar::DisableController()
 
 	AAIController* AIController = Cast<AAIController>(GetController());
 
-	if (AIController)
-	{
+		if (AIController)
+		{
 
 		AIController->GetBrainComponent()->StopLogic("Dead");
 
+		}
+
+	}
+
+void ABasicChar::AddTag(FGameplayTag& GivenTag)
+	{
+
+	GetAbilitySystemComponent()->AddLooseGameplayTag(GivenTag);
+	GetAbilitySystemComponent()->SetTagMapCount(GivenTag, 1);
+
+	}
+
+void ABasicChar::RemoveTag(FGameplayTag& TagToRemove) 
+	{
+	GetAbilitySystemComponent()->RemoveLooseGameplayTag(TagToRemove);
+
 	}
 
 
-	}
+
+//////// DELEGATES ////////
 
 void ABasicChar::OnManaChange(float Mana, float MaxMana) 
 	{
@@ -201,3 +232,5 @@ void ABasicChar::OnLevelUp(float Level)
 	BP_OnLevelUp(Level);
 
 	}
+
+

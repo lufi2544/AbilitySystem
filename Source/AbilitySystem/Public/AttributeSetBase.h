@@ -75,10 +75,6 @@ public:
 
 
 
-
-
-
-
     void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
     FOnHealthChange OnHealthChange;

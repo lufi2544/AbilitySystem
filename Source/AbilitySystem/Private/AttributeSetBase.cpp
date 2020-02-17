@@ -1,5 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "AttributeSetBase.h"
+
+#include "GameplayTagContainer.h"
+#include "BasicChar.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
 
@@ -25,13 +28,33 @@ void UAttributeSetBase::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	// If the property changed of any GE applied is Health Then...
 	if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<UProperty>(UAttributeSetBase::StaticClass(), GET_MEMBER_NAME_CHECKED(UAttributeSetBase,Health)))
 	{
+		//Owner casted to BasicChar
+		ABasicChar* OwnerCharacter = Cast<ABasicChar>(GetOwningActor());
+
+
 		//Clamping the values
 		Health.SetBaseValue(FMath::Clamp(Health.GetBaseValue(), 0.f, MaxHealth.GetBaseValue()));
 		Health.SetCurrentValue(FMath::Clamp(Health.GetCurrentValue(), 0.f, MaxHealth.GetCurrentValue()));
 
 
 		OnHealthChange.Broadcast(Health.GetCurrentValue(), MaxHealth.GetCurrentValue());
-	}
+
+		if(OwnerCharacter)
+		{
+				if (Health.GetCurrentValue() == MaxHealth.GetCurrentValue())
+				{
+			
+					OwnerCharacter->AddTag(OwnerCharacter->FullHealthTag);
+
+				}
+				else
+				{
+					OwnerCharacter->RemoveTag(OwnerCharacter->FullHealthTag);
+
+				}
+			}
+
+		}
 
 	// If the property changed of any GE applied is Mana Then...
 	if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<UProperty>(UAttributeSetBase::StaticClass(), GET_MEMBER_NAME_CHECKED(UAttributeSetBase, Mana))) 
