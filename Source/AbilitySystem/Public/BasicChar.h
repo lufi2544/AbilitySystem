@@ -30,7 +30,7 @@ class ABILITYSYSTEM_API ABasicChar : public ACharacter, public IAbilitySystemInt
 public:
 
 
-	/*	Multicast Delegate Functions	*/
+	/*	MultiCast Delegate Functions	*/
 
 	UFUNCTION()
 		void OnHealthChange(float Health, float MaxHealth);
