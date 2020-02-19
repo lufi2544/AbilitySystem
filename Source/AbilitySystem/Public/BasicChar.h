@@ -63,15 +63,6 @@ public:
 
 
 
-	/*Function that Sets the Ability on the Character*/
-	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
-	virtual void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
-
-	/*Activate the current ability*/
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-		bool PlayerActivateAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
-
-
 	/*Returns true if the Character is still Alive*/
 	UFUNCTION(BlueprintPure, Category = "State")
 		bool IsAlive();
@@ -79,7 +70,27 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CharacterBase")
 		uint8 GetTeamID() const;
 	
+	UFUNCTION(BlueprintPure, Category = "State")
+		float GetHealth();
 
+	UFUNCTION(BlueprintPure, Category = "State")
+		float GetMana();
+
+	UFUNCTION(BlueprintPure, Category = "State")
+		float GetStrenght();
+
+	UFUNCTION(BlueprintPure, Category = "State")
+		float GetLevel();
+
+
+
+	/*Function that Sets the Ability on the Character*/
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+		virtual void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
+
+	/*Activate the current ability*/
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+		bool CharacterActivateAbilityByClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
 
 
 

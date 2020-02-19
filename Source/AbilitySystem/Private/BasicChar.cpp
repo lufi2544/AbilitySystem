@@ -34,7 +34,7 @@ ABasicChar::ABasicChar()
 
 	AttributeAsset->OnLevelUp.AddDynamic(this, &ABasicChar::OnLevelUp);
 
-	AddTag(FullHealthTag);
+	
 
 	bIsCharacterAlive = true;
 
@@ -48,6 +48,8 @@ ABasicChar::ABasicChar()
 void ABasicChar::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AddTag(FullHealthTag);
 
 	AutoDeterminTeamIDbyControllerType();
 	
@@ -78,6 +80,26 @@ UAbilitySystemComponent* ABasicChar::GetAbilitySystemComponent() const
 
 
 ///// GETTERS AND STATE FUNCTIONS ////
+
+float ABasicChar::GetHealth() 
+	{
+	return AttributeAsset->GetHealth();
+	}
+
+float ABasicChar::GetMana() 
+{
+	return AttributeAsset->GetMana();
+}
+
+float ABasicChar::GetStrenght()
+{
+	return AttributeAsset->GetStrenght();
+}
+
+float ABasicChar::GetLevel()
+{
+	return AttributeAsset->GetLevel();
+}
 
 bool ABasicChar::IsAlive() 
 	{
@@ -137,7 +159,7 @@ void ABasicChar::AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire)
 }
 
 
-bool ABasicChar::PlayerActivateAbilitybyClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation)
+bool ABasicChar::CharacterActivateAbilityByClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation)
 	{
 
 	if (!ensure(AbilitySystemComponent)) { return false; }
@@ -164,11 +186,6 @@ void ABasicChar::OnHealthChange(float Health, float MaxHealth)
 	BP_OnHealthChange(Health, MaxHealth);
 	UE_LOG(LogTemp, Error, TEXT("%f"), Health);
 	}
-
-
-
-
-
 
 
 void ABasicChar::DisableController() 
@@ -198,6 +215,7 @@ void ABasicChar::AddTag(FGameplayTag& GivenTag)
 
 	GetAbilitySystemComponent()->AddLooseGameplayTag(GivenTag);
 	GetAbilitySystemComponent()->SetTagMapCount(GivenTag, 1);
+
 
 	}
 

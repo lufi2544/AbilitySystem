@@ -39,20 +39,22 @@ void UAttributeSetBase::PostGameplayEffectExecute(const struct FGameplayEffectMo
 
 		OnHealthChange.Broadcast(Health.GetCurrentValue(), MaxHealth.GetCurrentValue());
 
-		if(OwnerCharacter)
+		if (OwnerCharacter)
 		{
-				if (Health.GetCurrentValue() == MaxHealth.GetCurrentValue())
-				{
-			
-					OwnerCharacter->AddTag(OwnerCharacter->FullHealthTag);
+			if (Health.GetCurrentValue() == MaxHealth.GetCurrentValue())
+			{
 
-				}
-				else
-				{
-					OwnerCharacter->RemoveTag(OwnerCharacter->FullHealthTag);
+				OwnerCharacter->AddTag(OwnerCharacter->FullHealthTag);
 
-				}
+				UE_LOG(LogTemp,Error,TEXT("Health = Max"));
+
 			}
+			else
+			{
+				OwnerCharacter->RemoveTag(OwnerCharacter->FullHealthTag);
+
+			}
+		}
 
 		}
 
