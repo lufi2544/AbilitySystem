@@ -10,6 +10,7 @@
 #include "PlayerControllerBase.h"
 #include "AIController.h"
 #include "BrainComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "AttributeSetBase.h"
 
 #include "GameFramework/SpringArmComponent.h"
@@ -26,6 +27,8 @@ ABasicChar::ABasicChar()
 
 	AbilitySystemComponent = CreateDefaultSubobject<UCharAbilitySystemComponent>(FName("CharacterAbilitySystemComponent"));
 
+	Capsule = GetCapsuleComponent();
+
 	AttributeAsset->OnHealthChange.AddDynamic(this, &ABasicChar::OnHealthChange);
 
 	AttributeAsset->OnManaChange.AddDynamic(this, &ABasicChar::OnManaChange);
@@ -34,7 +37,8 @@ ABasicChar::ABasicChar()
 
 	AttributeAsset->OnLevelUp.AddDynamic(this, &ABasicChar::OnLevelUp);
 
-	
+	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ABasicChar::OnCapsuleBeginOverlap);
+
 
 	bIsCharacterAlive = true;
 
@@ -122,8 +126,20 @@ uint8 ABasicChar::GetTeamID() const
 
 bool ABasicChar::IsOtherHostile(ABasicChar* Other)
 {
+	bool bDifferentTeams = false;
 
-	return TeamID != Other->GetTeamID();
+	if (!ensure(Other)) { return false; }
+
+	if (this->GetTeamID() != Other->GetTeamID()) 
+		{
+		bDifferentTeams = true;
+	}
+	else
+	{
+		bDifferentTeams = false;
+	}
+
+	return bDifferentTeams;
 
 }
 
@@ -138,6 +154,15 @@ void ABasicChar::AutoDeterminTeamIDbyControllerType()
 
 
 }
+
+void ABasicChar::GetDashedEnemies(TArray<ABasicChar*>& DashedEnemies) 
+	{
+		
+	DashedEnemies = DashOverlappedActors;
+
+	
+
+	}
 
 
 //////// FUNCTIONS ////////
@@ -225,6 +250,43 @@ void ABasicChar::RemoveTag(FGameplayTag& TagToRemove)
 
 	}
 
+void ABasicChar::DashCollisionEnemies(ABasicChar*OverlappedActor) 
+
+	{
+
+	if (IsOtherHostile(OverlappedActor)) {
+
+		if (DashOverlappedActors.Contains(nullptr))
+		{
+
+			UE_LOG(LogTemp, Error, TEXT("Empty Enemies Dash Array"))
+		}
+
+		if (!DashOverlappedActors.Contains(OverlappedActor))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%i"),OverlappedActor->GetTeamID());
+			DashOverlappedActors.AddUnique(OverlappedActor);
+			BP_DashCollisionEnemies();
+
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Already Added!!"));
+
+
+		}
+	}
+
+	}
+
+void ABasicChar::CleanEnemiesArray()
+{
+
+	DashOverlappedActors.Empty();
+
+
+}
+
 
 
 //////// DELEGATES ////////
@@ -251,4 +313,13 @@ void ABasicChar::OnLevelUp(float Level)
 
 	}
 
+void ABasicChar::OnCapsuleBeginOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+	{
+
+	auto ActorOverlapped = Cast<ABasicChar>(OtherActor);
+
+	DashCollisionEnemies(ActorOverlapped);
+
+
+	}
 

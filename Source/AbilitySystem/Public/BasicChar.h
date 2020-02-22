@@ -44,6 +44,9 @@ public:
 	UFUNCTION()
 		void OnLevelUp(float Level);
 
+	UFUNCTION()
+		void OnCapsuleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 
 
 
@@ -92,7 +95,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 		bool CharacterActivateAbilityByClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
 
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+		void GetDashedEnemies(TArray<ABasicChar*>& DashedEnemies);
 
+	UFUNCTION(BlueprintCallable, Category="Abilities")
+		void CleanEnemiesArray();
+
+
+	
+
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities", meta = (DisplayName = "OnDashHitEnemy"))
+		void BP_DashCollisionEnemies();
 
 	/*	Event called when the health has changed and it shows the Max Health too.*/
 	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnHealthChange"))
@@ -129,6 +143,17 @@ public:
 		void RemoveTag(FGameplayTag& TagToRemove);
 
 	
+	
+
+
+	//Tag that determines if the player is full health
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "AbilityTags")
+	FGameplayTag FullHealthTag;
+
+
+
+
+
 	/*Determine the team Id for the character*/
 	void AutoDeterminTeamIDbyControllerType();
 
@@ -137,9 +162,14 @@ public:
 
 
 
-	//Tag that determines if the player is full health
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "AbilityTags")
-	FGameplayTag FullHealthTag;
+
+	// Array of the Actors that we collide with the capsule while dashing
+	TArray<ABasicChar*>DashOverlappedActors;
+
+
+	void DashCollisionEnemies(ABasicChar* Overlapped);
+
+	
 
 
 	
@@ -155,8 +185,12 @@ protected:
 
 	//The integer that determines the character team
 	uint8 TeamID;
+
+	// Character CapsuleComponent
+	UCapsuleComponent* Capsule;
 	
 private:
+
 
 
 
