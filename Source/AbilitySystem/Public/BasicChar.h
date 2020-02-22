@@ -95,15 +95,34 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 		bool CharacterActivateAbilityByClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
 
+	/*Event that give us a reference of the dashed enemies by the dash ability*/
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 		void GetDashedEnemies(TArray<ABasicChar*>& DashedEnemies);
 
+	/*Clear the dashed enemies array*/
 	UFUNCTION(BlueprintCallable, Category="Abilities")
 		void CleanEnemiesArray();
+
+	/*The controller repossess the character (IA and Player)*/
+	UFUNCTION(BlueprintCallable, Category ="CharacterBase")
+		void EnableController();
+
+	/*Unposses the controller from the character*/
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+		void DisableController();
+	
+	/*Applies a Stun State to the character*/
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+		void HitStun(float StunDuration);
 
 
 	
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities", meta = (DisplayName = "OnBeginStun"))
+		void BP_OnStun();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities", meta = (DisplayName = "OnEndStun"))
+		void BP_OnEndStun();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities", meta = (DisplayName = "OnDashHitEnemy"))
 		void BP_DashCollisionEnemies();
@@ -157,8 +176,11 @@ public:
 	/*Determine the team Id for the character*/
 	void AutoDeterminTeamIDbyControllerType();
 
-	/*Unposses the controller from the character*/
-	void DisableController();
+	
+
+
+	
+	
 
 
 
@@ -166,8 +188,13 @@ public:
 	// Array of the Actors that we collide with the capsule while dashing
 	TArray<ABasicChar*>DashOverlappedActors;
 
+	/**Function that checks if the dashed enemies by the dash
+	 ability are indeed enemies, and if so we add them to the dashed enemies array.
 
-	void DashCollisionEnemies(ABasicChar* Overlapped);
+	   @param OverlappedCharacters enemy to check
+
+	**/
+	void DashCollisionEnemies(ABasicChar* OverlappedCharacters);
 
 	
 
@@ -188,6 +215,8 @@ protected:
 
 	// Character CapsuleComponent
 	UCapsuleComponent* Capsule;
+
+	FTimerHandle StunTimeHandle;
 	
 private:
 

@@ -12,6 +12,7 @@
 #include "BrainComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "AttributeSetBase.h"
+#include "TimerManager.h"
 
 #include "GameFramework/SpringArmComponent.h"
 
@@ -215,25 +216,98 @@ void ABasicChar::OnHealthChange(float Health, float MaxHealth)
 
 void ABasicChar::DisableController() 
 	{
+
 	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(GetController());
 
-	if (PlayerController)
-	{
-
-		PlayerController->DisableInput(PlayerController);
-
-	}
-
 	AAIController* AIController = Cast<AAIController>(GetController());
+
+	//If the Character Is Alive we understand that is the stun what we call, else is dead so we just unposses
+	if (IsAlive()) 
+	{
+		
+		if (PlayerController)
+		{
+
+			PlayerController->DisableInput(PlayerController);
+
+			BP_OnStun();
+
+		}
+
+		
+		if (AIController)
+		{
+
+			AIController->GetBrainComponent()->StopLogic("Dead");
+
+			BP_OnStun();
+		}
+	}
+	else
+	{
+		if (PlayerController)
+		{
+
+			PlayerController->DisableInput(PlayerController);
+
+		}
+
 
 		if (AIController)
 		{
 
-		AIController->GetBrainComponent()->StopLogic("Dead");
+			AIController->GetBrainComponent()->StopLogic("Dead");
+
+		}
+	}
+
+	}
+
+void ABasicChar::EnableController()
+{
+
+	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(GetController());
+
+	AAIController* AIController = Cast<AAIController>(GetController());
+
+	if (IsAlive())
+	{
+
+	
+
+		if (PlayerController)
+		{
+
+			PlayerController->EnableInput(PlayerController);
+			
+			BP_OnEndStun();
+		}
+
+		if (AIController)
+		{
+
+			AIController->GetBrainComponent()->RestartLogic();
+
+			BP_OnEndStun();
+		}
+	}
+	else
+	{
+		if (PlayerController)
+		{
+
+			PlayerController->EnableInput(PlayerController);
 
 		}
 
+		if (AIController)
+		{
+
+			AIController->GetBrainComponent()->RestartLogic();
+
+		}
 	}
+}
 
 void ABasicChar::AddTag(FGameplayTag& GivenTag)
 	{
@@ -264,7 +338,6 @@ void ABasicChar::DashCollisionEnemies(ABasicChar*OverlappedActor)
 
 		if (!DashOverlappedActors.Contains(OverlappedActor))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%i"),OverlappedActor->GetTeamID());
 			DashOverlappedActors.AddUnique(OverlappedActor);
 			BP_DashCollisionEnemies();
 
@@ -287,6 +360,18 @@ void ABasicChar::CleanEnemiesArray()
 
 }
 
+void ABasicChar::HitStun(float StunDuration) 
+	{
+
+	DisableController();
+
+	GetWorldTimerManager().SetTimer(StunTimeHandle,this,&ABasicChar::EnableController,StunDuration,false);
+
+	
+
+	
+
+	}
 
 
 //////// DELEGATES ////////
