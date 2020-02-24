@@ -18,6 +18,6 @@ public:
 
 	UAbilityCapsule();
 
-	/*TArray<FHitResult>CheckCapsuleCollision(AActor* Actor);*/
+	TArray<FHitResult>CheckCapsuleCollision(AActor* Actor);
 	
 };
