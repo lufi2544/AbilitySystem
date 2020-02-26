@@ -3,8 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+
+#include "AblityTypes.h"
 #include "Abilities/GameplayAbility.h"
 #include "GameplayAbilityBase.generated.h"
+
+
+
+
 
 /**
  * 
@@ -19,5 +26,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="AbilityBase")
 	UMaterialInstance* UIMaterial;
+
+
+
+
+	UFUNCTION(BlueprintCallable, Category = "AbilityBase")
+		FGameplayAbilityInfo GetAbilityInfo();
 
 };

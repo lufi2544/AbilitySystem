@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
+
+
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "BasicChar.generated.h"
@@ -16,6 +19,7 @@ class UGameplayAbility;
 class UAbilitySystemComponent;
 class UCameraComponent;
 class USpringArmComponent;
+class UGameplayAbilityBase;
 
 
 
@@ -67,22 +71,22 @@ public:
 
 
 	/*Returns true if the Character is still Alive*/
-	UFUNCTION(BlueprintPure, Category = "State")
+	UFUNCTION(BlueprintPure, Category = "CharacterBaseState")
 		bool IsAlive();
 
 	UFUNCTION(BlueprintPure, Category = "CharacterBase")
 		uint8 GetTeamID() const;
 	
-	UFUNCTION(BlueprintPure, Category = "State")
+	UFUNCTION(BlueprintPure, Category = "CharacterBaseState")
 		float GetHealth();
 
-	UFUNCTION(BlueprintPure, Category = "State")
+	UFUNCTION(BlueprintPure, Category = "CharacterBaseState")
 		float GetMana();
 
-	UFUNCTION(BlueprintPure, Category = "State")
+	UFUNCTION(BlueprintPure, Category = "CharacterBaseState")
 		float GetStrenght();
 
-	UFUNCTION(BlueprintPure, Category = "State")
+	UFUNCTION(BlueprintPure, Category = "CharacterBaseState")
 		float GetLevel();
 
 
@@ -91,16 +95,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
 		virtual void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
 
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+		void AquireAbilities(TArray<TSubclassOf<UGameplayAbility>> GameplayAbilities);
+
 	/*Activate the current ability*/
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
 		bool CharacterActivateAbilityByClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation);
 
 	/*Event that give us a reference of the dashed enemies by the dash ability*/
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
 		void GetDashedEnemies(TArray<ABasicChar*>& DashedEnemies);
 
 	/*Clear the dashed enemies array*/
-	UFUNCTION(BlueprintCallable, Category="Abilities")
+	UFUNCTION(BlueprintCallable, Category="CharacterBase")
 		void CleanEnemiesArray();
 
 	/*The controller repossess the character (IA and Player)*/
@@ -112,19 +119,19 @@ public:
 		void DisableController();
 	
 	/*Applies a Stun State to the character*/
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
 		void HitStun(float StunDuration);
 
 
 	
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities", meta = (DisplayName = "OnBeginStun"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnBeginStun"))
 		void BP_OnStun();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities", meta = (DisplayName = "OnEndStun"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnEndStun"))
 		void BP_OnEndStun();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities", meta = (DisplayName = "OnDashHitEnemy"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "CharacterBase", meta = (DisplayName = "OnDashHitEnemy"))
 		void BP_DashCollisionEnemies();
 
 	/*	Event called when the health has changed and it shows the Max Health too.*/
@@ -205,6 +212,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+	void AddAbilityToUI(TSubclassOf<UGameplayAbilityBase> AbilityToAdd);
+
 	//Member variable to store if The character is alive
 	bool bIsCharacterAlive;
 
@@ -216,8 +226,16 @@ protected:
 	// Character CapsuleComponent
 	UCapsuleComponent* Capsule;
 
+	//Timer handler for a function
 	FTimerHandle StunTimeHandle;
+
+
+
+
 	
+
+
+
 private:
 
 

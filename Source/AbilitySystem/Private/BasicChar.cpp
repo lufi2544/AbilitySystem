@@ -3,7 +3,7 @@
 
 #include "BasicChar.h"
 
-
+#include "GameplayAbilityBase.h"
 #include "AbilitySystemComponent.h"
 #include "CharAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
@@ -185,16 +185,46 @@ void ABasicChar::AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire)
 }
 
 
+void ABasicChar::AquireAbilities(TArray<TSubclassOf<UGameplayAbility>> AbilitiesToAquire) 
+{
+
+	for (TSubclassOf<UGameplayAbility> Ability : AbilitiesToAquire) 
+	{
+	
+		AquireAbility(Ability);
+		if (Ability->IsChildOf(UGameplayAbilityBase::StaticClass())) 
+			{
+		
+			TSubclassOf<UGameplayAbilityBase> AblityBaseClass = Ability;
+
+			if (AblityBaseClass != nullptr) 
+				{
+			
+				AddAbilityToUI(AblityBaseClass);
+
+				
+			
+				}
+		
+		
+			}
+	
+	}
+
+
+}
+
 bool ABasicChar::CharacterActivateAbilityByClass(TSubclassOf<UGameplayAbility>Ability, bool RemoteActivation)
 	{
 
-	if (!ensure(AbilitySystemComponent)) { return false; }
-	else
-	{
-		return AbilitySystemComponent->TryActivateAbilityByClass(Ability, RemoteActivation);
-	}
+		if (!ensure(AbilitySystemComponent)) { return false; }
 
-	}
+		else
+		{
+			return AbilitySystemComponent->TryActivateAbilityByClass(Ability, RemoteActivation);
+		}
+
+		}
 
 void ABasicChar::OnHealthChange(float Health, float MaxHealth) 
 	{
@@ -367,12 +397,38 @@ void ABasicChar::HitStun(float StunDuration)
 
 	GetWorldTimerManager().SetTimer(StunTimeHandle,this,&ABasicChar::EnableController,StunDuration,false);
 
-	
+	}
 
-	
+void ABasicChar::AddAbilityToUI(TSubclassOf<UGameplayAbilityBase>AbilityToAdd) 
+{
+
+	APlayerControllerBase* PlayerController = Cast<APlayerControllerBase>(GetController());
+
+	if (PlayerController)
+	{
+
+/*
+		The TSubclasss of is a subclass so we have to get the default class to operate with it, in order to get some functions or variables. 
+		The TSubclass it is just a reference to that class and we need to get the class itself.*/
+
+		UGameplayAbilityBase* AbilityInstance = AbilityToAdd.Get()->GetDefaultObject<UGameplayAbilityBase>();
+		
+		if (AbilityInstance) 
+			{
+			
+		
+			FGameplayAbilityInfo AbilityInfo = AbilityInstance->GetAbilityInfo();
+
+
+			PlayerController->AddAbilityToUI(AbilityInfo);
+
+			
+		
+			}
 
 	}
 
+}
 
 //////// DELEGATES ////////
 

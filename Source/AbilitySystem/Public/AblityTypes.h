@@ -12,6 +12,8 @@
 class UGameplayAbilityBase;
 class UMaterialInstance;
 
+
+// The possible costs for an Ability to be used
 UENUM(BlueprintType)
 enum class EAbilityCostType : uint8 
 {
