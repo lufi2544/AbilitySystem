@@ -231,16 +231,17 @@ void ABasicChar::OnHealthChange(float Health, float MaxHealth)
 
 	if (!IsAlive() && bIsCharacterAlive)
 	{
+		bIsCharacterAlive = false;
 		DisableController();
 		BP_OnHealthChange(Health, MaxHealth);
 		BP_OnDeath();
-		bIsCharacterAlive = false;
+		
 		
 		return;
 	}
 
 	BP_OnHealthChange(Health, MaxHealth);
-	UE_LOG(LogTemp, Error, TEXT("%f"), Health);
+	
 	}
 
 
@@ -262,6 +263,8 @@ void ABasicChar::DisableController()
 
 			BP_OnStun();
 
+			
+
 		}
 
 		
@@ -279,14 +282,16 @@ void ABasicChar::DisableController()
 		{
 
 			PlayerController->DisableInput(PlayerController);
+			UE_LOG(LogTemp, Error, TEXT(" Player Out"));
 
 		}
 
 
 		if (AIController)
 		{
-
-			AIController->GetBrainComponent()->StopLogic("Dead");
+			AIController->UnPossess();
+			//AIController->GetBrainComponent()->StopLogic("Dead");
+			UE_LOG(LogTemp, Error, TEXT(" AI Out"));
 
 		}
 	}
